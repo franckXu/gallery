@@ -1,0 +1,108 @@
+.app {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+
+  background: linear-gradient(45deg, #443b49, #eaa652, #443b49);
+}
+.movie {
+  position: relative;
+  cursor: pointer;
+
+  margin: 10px;
+  height:202px;
+
+  &:hover &-mask {
+    display: flex;
+  }
+  &-mask {
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    background-color: rgba(255, 255, 255, 0.4);
+  }
+
+  &-dot {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    color: white;
+    font-size: 18px;
+  }
+
+  // &-image {
+  //   width: 135px;
+  //   height: 202px;
+  // }
+}
+.elevator {
+  // display: none;
+
+  position: fixed;
+  right: 40px;
+  bottom: 20px;
+
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  text-align: center;
+  font-size: 16px;
+
+  &.show {
+    display: block;
+  }
+}
+
+.detail {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+
+  background-color: rgba(0, 0, 0, 0.8);
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  &-prev-btn,
+  &-next-btn {
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    font-size: 16px;
+
+    cursor: pointer;
+
+    &-hide {
+      visibility: hidden;
+    }
+  }
+
+  
+}
