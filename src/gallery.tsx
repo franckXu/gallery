@@ -2,7 +2,9 @@ import React from "react";
 import style from "./gallery.module.scss";
 import cx from "classnames";
 import Detail from "./components/detail";
-import Image from './components/image'
+import Image from "./components/image";
+import SearchBar from "./components/search-bar";
+
 const movies = require("./data.json");
 
 const PAGE_SIZE = 50;
@@ -51,6 +53,8 @@ const App: React.FC = () => {
     start: 0
   });
   const [curMovieIdx, setCurMovieIdx] = React.useState<number>(-1);
+  const [keyWord, setKeyWord] = React.useState<string>("");
+  const [stars, setStars] = React.useState<string[]>([]);
 
   const appRef = React.useRef<HTMLDivElement>(null);
 
@@ -62,17 +66,30 @@ const App: React.FC = () => {
   const renderList = () => {
     return (
       <>
-        {data.map((item, i) => {
-          return (
-            <Movie
-              key={i}
-              idx={i}
-              name={item.title}
-              image={item.cover}
-              onMovieClick={onMovieClick}
-            />
-          );
-        })}
+        {data
+          .filter(item => {
+            console.log();
+            const a = !keyWord || item.casts.some(cast).indexOf(keyWord) > -1;
+            const c = !keyWord || item.casts.indexOf(keyWord) > -1;
+            const b =
+              !stars.length ||
+              stars.some(star => {
+                return Math.round(+item.star * 0.1) + "" === star;
+              });
+
+            return a && b;
+          })
+          .map((item, i) => {
+            return (
+              <Movie
+                key={i}
+                idx={i}
+                name={item.title}
+                image={item.cover}
+                onMovieClick={onMovieClick}
+              />
+            );
+          })}
         {loading ? <div>loading...</div> : null}
       </>
     );
@@ -134,14 +151,24 @@ const App: React.FC = () => {
         Top
       </div>
 
-      <div style={{ display: "none" }} className={style["tool"]}>
-        <div>
-          <div>search</div>
-          <div>
-            <input type="search" />
-          </div>
-        </div>
-      </div>
+      <SearchBar
+        stars={stars}
+        keyWord={keyWord}
+        onKeyWordChange={setKeyWord}
+        onStarChange={star => {
+          const idx = stars.indexOf(star);
+          if (idx > -1) {
+            setStars(stars => {
+              stars.splice(idx, 1);
+              return [...stars];
+            });
+          } else {
+            setStars([...stars, star]);
+          }
+
+          console.log(star);
+        }}
+      />
 
       {curMovieIdx > -1 ? (
         <div className={style["detail"]}>
@@ -186,10 +213,7 @@ const Movie: React.SFC<{
       onClick={() => props.onMovieClick(props.idx)}
     >
       <div>
-        <Image
-          src={props.image}
-          alt={props.name}
-        />
+        <Image src={props.image} alt={props.name} />
       </div>
       <div className={style["movie-mask"]}>
         <div className={style["movie-dot"]}>...</div>

@@ -1,7 +1,6 @@
 import React from "react";
 import style from "./style.module.scss";
 import { TMoive } from "../../gallery";
-import { isTypeCastExpression } from "@babel/types";
 
 type TDetailProps = TMoive & {
   onCloseBtnClick(): void;
