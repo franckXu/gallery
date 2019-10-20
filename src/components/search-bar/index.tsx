@@ -23,12 +23,11 @@ const SearchBar: React.SFC<TProps> = props => {
         {[...Array(5)].map((_, i) => {
           i = i + 1;
           return (
-            <label htmlFor={"star" + i}>
+            <label htmlFor={"star" + i} key={i} >
               <input
                 id={"star" + i}
                 name="star"
                 type="checkbox"
-                key={i}
                 value={i}
                 checked={props.stars.indexOf(i + "") > -1}
                 onChange={e => props.onStarChange(e.target.value)}

@@ -46,6 +46,38 @@ const genData: TGenData = q => {
   });
 };
 
+const filterWithKeyword = (data:TMoive[],stars:string[],keyWord:string)=>{
+    return data.filter(item => {
+            const matchCast = !keyWord || item.casts.some(cast=> cast.indexOf(keyWord) > -1)
+            const matchTitle = !keyWord || item.title.search(keyWord) > -1;
+            const matchStar =
+              !stars.length ||
+              stars.some(star => {
+                return Math.round(+item.star * 0.1) + "" === star;
+              });
+
+            return (matchCast || matchTitle)&& matchStar ;
+          })
+}
+
+type TListProps = {
+    data:TMoive[],onMovieClick(i:number):void
+}
+const List:React.SFC<TListProps>  = ({data,onMovieClick})=>{
+    return <> { data.map((item, i) => {
+            return (
+                <Movie
+                key={i}
+                idx={i}
+                name={item.title}
+                image={item.cover}
+                onMovieClick={onMovieClick}
+                />
+            );
+        })
+        }</>
+}
+
 const App: React.FC = () => {
   const [data, setData] = React.useState<TMoive[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -61,38 +93,6 @@ const App: React.FC = () => {
   const onMovieClick = (i: number) => {
     // console.log(item, i);
     setCurMovieIdx(i);
-  };
-
-  const renderList = () => {
-    return (
-      <>
-        {data
-          .filter(item => {
-            console.log();
-            const a = !keyWord || item.casts.some(cast).indexOf(keyWord) > -1;
-            const c = !keyWord || item.casts.indexOf(keyWord) > -1;
-            const b =
-              !stars.length ||
-              stars.some(star => {
-                return Math.round(+item.star * 0.1) + "" === star;
-              });
-
-            return a && b;
-          })
-          .map((item, i) => {
-            return (
-              <Movie
-                key={i}
-                idx={i}
-                name={item.title}
-                image={item.cover}
-                onMovieClick={onMovieClick}
-              />
-            );
-          })}
-        {loading ? <div>loading...</div> : null}
-      </>
-    );
   };
 
   const onElevatorClick = () => {
@@ -145,7 +145,12 @@ const App: React.FC = () => {
 
   return (
     <div className={style.app} ref={appRef}>
-      {loading && !data.length ? <div>loading...</div> : renderList()}
+      {loading && !data.length ? <div>loading...</div> :
+          <>
+            <List data={filterWithKeyword(data,stars,keyWord)} onMovieClick={onMovieClick} />
+            {loading ? <div>loading...</div> : null}
+          </>
+        }
 
       <div className={style["elevator"]} onClick={onElevatorClick}>
         Top
@@ -182,13 +187,13 @@ const App: React.FC = () => {
             &lt;
           </div>
           <Detail
-            {...data[curMovieIdx]}
+            {...filterWithKeyword(data,stars,keyWord)[curMovieIdx]}
             onCloseBtnClick={() => setCurMovieIdx(-1)}
           />
           <div
             className={cx(
               style["detail-next-btn"],
-              curMovieIdx === data.length - 1 && style["detail-next-btn-hide"]
+              curMovieIdx === filterWithKeyword(data,stars,keyWord).length - 1 && style["detail-next-btn-hide"]
             )}
             onClick={() => setCurMovieIdx(curMovieIdx + 1)}
           >
