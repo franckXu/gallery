@@ -2,7 +2,7 @@ import React from "react";
 import style from "./gallery.module.scss";
 import cx from "classnames";
 import Detail from "./components/detail";
-import Image from "./components/image";
+import Cover from "./components/cover";
 import SearchBar from "./components/search-bar";
 
 const movies = require("./data.json");
@@ -46,37 +46,47 @@ const genData: TGenData = q => {
   });
 };
 
-const filterWithKeyword = (data:TMoive[],stars:string[],keyWord:string)=>{
-    return data.filter(item => {
-            const matchCast = !keyWord || item.casts.some(cast=> cast.indexOf(keyWord) > -1)
-            const matchTitle = !keyWord || item.title.search(keyWord) > -1;
-            const matchStar =
-              !stars.length ||
-              stars.some(star => {
-                return Math.round(+item.star * 0.1) + "" === star;
-              });
+const filterWithKeyword = (
+  data: TMoive[],
+  stars: string[],
+  keyWord: string
+) => {
+  return data.filter(item => {
+    const matchCast =
+      !keyWord || item.casts.some(cast => cast.indexOf(keyWord) > -1);
+    const matchTitle = !keyWord || item.title.search(keyWord) > -1;
+    const matchStar =
+      !stars.length ||
+      stars.some(star => {
+        return Math.round(+item.star * 0.1) + "" === star;
+      });
 
-            return (matchCast || matchTitle)&& matchStar ;
-          })
-}
+    return (matchCast || matchTitle) && matchStar;
+  });
+};
 
 type TListProps = {
-    data:TMoive[],onMovieClick(i:number):void
-}
-const List:React.SFC<TListProps>  = ({data,onMovieClick})=>{
-    return <> { data.map((item, i) => {
-            return (
-                <Movie
-                key={i}
-                idx={i}
-                name={item.title}
-                image={item.cover}
-                onMovieClick={onMovieClick}
-                />
-            );
-        })
-        }</>
-}
+  data: TMoive[];
+  onMovieClick(i: number): void;
+};
+const List: React.SFC<TListProps> = ({ data, onMovieClick }) => {
+  return (
+    <>
+      {" "}
+      {data.map((item, i) => {
+        return (
+          <Movie
+            key={i}
+            idx={i}
+            name={item.title}
+            image={item.cover}
+            onMovieClick={onMovieClick}
+          />
+        );
+      })}
+    </>
+  );
+};
 
 const App: React.FC = () => {
   const [data, setData] = React.useState<TMoive[]>([]);
@@ -87,6 +97,8 @@ const App: React.FC = () => {
   const [curMovieIdx, setCurMovieIdx] = React.useState<number>(-1);
   const [keyWord, setKeyWord] = React.useState<string>("");
   const [stars, setStars] = React.useState<string[]>([]);
+
+  const [currentCoverBg, setCurrentCoverBg] = React.useState<string>("");
 
   const appRef = React.useRef<HTMLDivElement>(null);
 
@@ -145,15 +157,37 @@ const App: React.FC = () => {
 
   return (
     <div className={style.app} ref={appRef}>
-      {loading && !data.length ? <div>loading...</div> :
-          <>
-            <List data={filterWithKeyword(data,stars,keyWord)} onMovieClick={onMovieClick} />
-            {loading ? <div>loading...</div> : null}
-          </>
-        }
+      {loading && !data.length ? (
+        <div>loading...</div>
+      ) : (
+        <>
+          <List
+            data={filterWithKeyword(data, stars, keyWord)}
+            onMovieClick={onMovieClick}
+          />
+          {loading ? <div>loading...</div> : null}
+        </>
+      )}
+
+      {data.length ? (
+        <div
+          className={style["refresh-bg"]}
+          onClick={() => {
+            setCurrentCoverBg(
+              data[Math.floor(Math.random() * (data.length - 1))].cover
+            );
+          }}
+        >
+          我变
+        </div>
+      ) : null}
 
       <div className={style["elevator"]} onClick={onElevatorClick}>
         Top
+      </div>
+
+      <div className={style["cover-bg"]}>
+        <img src={currentCoverBg} alt="" />
       </div>
 
       <SearchBar
@@ -187,13 +221,15 @@ const App: React.FC = () => {
             &lt;
           </div>
           <Detail
-            {...filterWithKeyword(data,stars,keyWord)[curMovieIdx]}
+            {...filterWithKeyword(data, stars, keyWord)[curMovieIdx]}
             onCloseBtnClick={() => setCurMovieIdx(-1)}
           />
           <div
             className={cx(
               style["detail-next-btn"],
-              curMovieIdx === filterWithKeyword(data,stars,keyWord).length - 1 && style["detail-next-btn-hide"]
+              curMovieIdx ===
+                filterWithKeyword(data, stars, keyWord).length - 1 &&
+                style["detail-next-btn-hide"]
             )}
             onClick={() => setCurMovieIdx(curMovieIdx + 1)}
           >
@@ -218,7 +254,7 @@ const Movie: React.SFC<{
       onClick={() => props.onMovieClick(props.idx)}
     >
       <div>
-        <Image src={props.image} alt={props.name} />
+        <Cover src={props.image} alt={props.name} />
       </div>
       <div className={style["movie-mask"]}>
         <div className={style["movie-dot"]}>...</div>
