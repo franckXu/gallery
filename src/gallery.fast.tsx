@@ -5,6 +5,8 @@ import Detail from "./components/detail";
 import Cover from "./components/cover";
 import SearchBar from "./components/search-bar";
 
+const SearchBarMemo = React.memo(SearchBar);
+
 const movies = require("./data.json");
 
 const PAGE_SIZE = 50;
@@ -72,10 +74,9 @@ type TListProps = {
 const List: React.SFC<TListProps> = ({ data, onMovieClick }) => {
   return (
     <>
-      {" "}
       {data.map((item, i) => {
         return (
-          <Movie
+          <MovieMemo
             key={i}
             idx={i}
             name={item.title}
@@ -87,6 +88,7 @@ const List: React.SFC<TListProps> = ({ data, onMovieClick }) => {
     </>
   );
 };
+const ListMemo = React.memo(List);
 
 const App: React.FC = () => {
   const [data, setData] = React.useState<TMoive[]>([]);
@@ -102,11 +104,6 @@ const App: React.FC = () => {
 
   const appRef = React.useRef<HTMLDivElement>(null);
 
-  const onMovieClick = (i: number) => {
-    // console.log(item, i);
-    setCurMovieIdx(i);
-  };
-
   const onElevatorClick = () => {
     if (!appRef.current) return;
 
@@ -115,6 +112,25 @@ const App: React.FC = () => {
       behavior: "smooth"
     });
   };
+
+  const onStarChange = React.useCallback(
+    (star: string) => {
+      const idx = stars.indexOf(star);
+      if (idx > -1) {
+        setStars(stars => {
+          stars.splice(idx, 1);
+          return [...stars];
+        });
+      } else {
+        setStars([...stars, star]);
+      }
+    },
+    [stars]
+  );
+
+  const dataMemo = React.useMemo(() => {
+    return filterWithKeyword(data, stars, keyWord);
+  }, [data, stars, keyWord]);
 
   React.useEffect(() => {
     if (!appRef.current) return;
@@ -161,10 +177,7 @@ const App: React.FC = () => {
         <div>loading...</div>
       ) : (
         <>
-          <List
-            data={filterWithKeyword(data, stars, keyWord)}
-            onMovieClick={onMovieClick}
-          />
+          <ListMemo data={dataMemo} onMovieClick={setCurMovieIdx} />
           {loading ? <div style={{ width: "100%" }}>loading...</div> : null}
         </>
       )}
@@ -190,23 +203,11 @@ const App: React.FC = () => {
         <img src={currentCoverBg} alt="" />
       </div>
 
-      <SearchBar
+      <SearchBarMemo
         stars={stars}
         keyWord={keyWord}
         onKeyWordChange={setKeyWord}
-        onStarChange={star => {
-          const idx = stars.indexOf(star);
-          if (idx > -1) {
-            setStars(stars => {
-              stars.splice(idx, 1);
-              return [...stars];
-            });
-          } else {
-            setStars([...stars, star]);
-          }
-
-          console.log(star);
-        }}
+        onStarChange={onStarChange}
       />
 
       {curMovieIdx > -1 ? (
@@ -262,5 +263,7 @@ const Movie: React.SFC<{
     </div>
   );
 };
+
+const MovieMemo = React.memo(Movie);
 
 export default App;
