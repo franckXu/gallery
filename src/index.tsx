@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 // import App from './app';
-import App from "./gallery.fast";
+import App from "./gallery.class";
 
 import * as serviceWorker from "./serviceWorker";
 
