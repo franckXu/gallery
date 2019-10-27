@@ -2,7 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 // import App from './app';
-import App from "./gallery.class";
+// import App from "./gallery.class";
+import App from "./app.render-time.commit-time";
 
 import * as serviceWorker from "./serviceWorker";
 
