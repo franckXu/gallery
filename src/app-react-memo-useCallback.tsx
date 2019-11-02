@@ -1,11 +1,7 @@
 import React from "react";
 
-// const data = [{
-//   name : 'fanck'},{name : '胡歌'
-// }]
-
 const Field: React.SFC<{ value: string; label: string }> = props => {
-  // console.log('render Field',props)
+  console.log("<Field /> render", props);
   return (
     <div>
       {props.label}:{props.value}

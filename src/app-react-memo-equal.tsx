@@ -1,7 +1,7 @@
 import React from "react";
 
 const Field: React.SFC<{ value: string; label: string }> = props => {
-  // console.log('render Field',props)
+  console.log("<Field /> render", props);
   return (
     <div>
       {props.label}:{props.value}
@@ -18,7 +18,7 @@ type TInputItemProps = {
 };
 
 const InputItem: React.SFC<TInputItemProps> = props => {
-  console.log("InputItem render", props);
+  console.log("<InputItem /> render", props);
   return (
     <div>
       <label htmlFor={props.label}>{props.label}:</label>
@@ -36,7 +36,8 @@ const InputItemMemo = React.memo(
   InputItem,
   (prevProps: TInputItemProps, nextProps: TInputItemProps) => {
     return (
-      prevProps.value === nextProps.value && prevProps.label === nextProps.label // && prevProps.onChange === nextProps.onChange
+      prevProps.value === nextProps.value && prevProps.label === nextProps.label
+      // && prevProps.onChange === nextProps.onChange
     );
   }
 );
@@ -48,14 +49,14 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <InputItemMemo
+      <InputItem
         value={name}
         label="name"
         onChange={(val: string) => {
           setName(val);
         }}
       />
-      <InputItemMemo
+      <InputItem
         value={age}
         label="age"
         onChange={(val: string) => {
@@ -63,8 +64,8 @@ const App: React.FC = () => {
         }}
       />
       <hr />
-      <FieldMemo value={name} label="name" />
-      <FieldMemo value={age} label="age" />
+      <Field value={name} label="name" />
+      <Field value={age} label="age" />
     </div>
   );
 };

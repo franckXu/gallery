@@ -9,7 +9,7 @@ const genMockData = () => {
 };
 
 const Field: React.SFC<{ value: string; label: string }> = props => {
-  console.log("Field render", props);
+  console.log("<Field /> render", props);
   return (
     <li>
       {props.label}:{props.value}
@@ -25,7 +25,7 @@ const InputItem: React.SFC<{
   onChange(val: string): void;
   onBlur?(val: string): void;
 }> = props => {
-  console.log("InputItem render", props);
+  console.log("<InputItem /> render", props);
   return (
     <div>
       <label htmlFor={props.label}>{props.label}:</label>
@@ -43,7 +43,7 @@ const InputItem: React.SFC<{
 const InputItemMemo = React.memo(InputItem);
 
 const List: React.SFC<{ firends: TFirend[]; name: string }> = props => {
-  console.log("render List", props);
+  console.log("<List /> render", props);
 
   return (
     <ul>
@@ -72,21 +72,24 @@ const App: React.FC = () => {
     setFirends(genMockData());
   }, []);
 
-  const firendsMemo = React.useMemo(()=>{
+  const getFirends = () => {
     return firends.filter(
       item => item.name.toLowerCase().search(name.toLowerCase()) > -1
-    )
-  },[name,firends])
+    );
+  };
+
+  /* const firendsMemo = React.useMemo(() => {
+    return firends.filter(
+      item => item.name.toLowerCase().search(name.toLowerCase()) > -1
+    );
+  }, [name, firends]); */
 
   return (
     <div>
       <InputItemMemo value={phone} label="phone" onChange={setPhone} />
       <InputItemMemo value={name} label="name" onChange={onNameChange} />
       <hr />
-      <ListMemo
-        firends={firendsMemo}
-        name={name}
-      />
+      <ListMemo firends={getFirends()} name={name} />
     </div>
   );
 };

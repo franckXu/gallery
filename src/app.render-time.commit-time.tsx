@@ -53,10 +53,6 @@ const App: React.FC = () => {
 
   return (
     <>
-      <RC data={data} />
-      <hr />
-      <R data={data} />
-      <hr />
       <C data={data} />
       <button
         onClick={() => setData(genData)}

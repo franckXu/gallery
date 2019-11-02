@@ -44,26 +44,20 @@ const App: React.FC = () => {
   const [age, setAge] = React.useState<string>("");
   const [sex, setSex] = React.useState<string>("");
 
-  const onNameChange = React.useCallback(
-    (val: string) => {
-      setName(val);
-    },
-    [sex]
-  );
+  const onNameChange = React.useCallback((val: string) => {
+    setName(val);
+  }, []);
 
-  const onNameBlur = React.useCallback(
-    (val: string) => {
-      // console.log('onNameBlur sex:',sex);
-      if (sex === "0" && val.search("Mr") !== 0) {
-        return alert("please input Mr");
-      }
+  const onNameBlur = React.useCallback((val: string) => {
+    // console.log('onNameBlur sex:',sex);
+    if (sex === "0" && val.search("Mr") !== 0) {
+      return alert("please input Mr");
+    }
 
-      if (sex === "1" && val.search("Ms") !== 0) {
-        return alert("please input Ms");
-      }
-    },
-    [sex]
-  );
+    if (sex === "1" && val.search("Ms") !== 0) {
+      return alert("please input Ms");
+    }
+  }, []); // <---------------^_^
 
   const onAgeChange = React.useCallback((val: string) => {
     setAge(val);

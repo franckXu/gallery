@@ -22,7 +22,7 @@ type TFieldProps = {
   onClick(): void;
 };
 const Field: React.SFC<TFieldProps> = props => {
-  console.log("Field render", props);
+  console.log("<Field /> render", props);
   return (
     <li onClick={props.onClick}>
       <p>
@@ -33,14 +33,17 @@ const Field: React.SFC<TFieldProps> = props => {
   );
 };
 
-const FieldMemo = React.memo(Field, (pP: TFieldProps, nP: TFieldProps) => {
-  console.log(pP, nP);
+const FieldMemo = React.memo(
+  Field
+  /* , (pP: TFieldProps, nP: TFieldProps) => {
+  console.log("equal", pP, nP);
   return (
     pP.value === nP.value &&
     pP.label === nP.label &&
     pP.nickNames.toString() === nP.nickNames.toString()
   );
-});
+} */
+);
 
 const InputItem: React.SFC<{
   value: string;
@@ -48,7 +51,7 @@ const InputItem: React.SFC<{
   onChange(val: string): void;
   onBlur?(val: string): void;
 }> = props => {
-  console.log("InputItem render", props);
+  console.log("<InputItem /> render", props);
   return (
     <div>
       <label htmlFor={props.label}>{props.label}:</label>
@@ -69,12 +72,12 @@ const List: React.SFC<{
   firends: TFirend[];
   onItemClick(id: string): void;
 }> = props => {
-  console.log("render List", props);
+  console.log("<List /> render", props);
   return (
     <ul>
       {props.firends.map((item, i) => {
         return (
-          <FieldMemo
+          <Field
             key={i}
             value={item.phone}
             label={item.name}
@@ -142,7 +145,8 @@ const EditForm: React.SFC<
 };
 
 const App: React.FC = () => {
-  console.log("App render");
+  console.log("----------------");
+  console.log("<App /> render");
 
   const [firends, setFirends] = React.useState<TFirend[]>([]);
   const [curFirendId, setCurFirendId] = React.useState<string>("");
@@ -177,7 +181,12 @@ const App: React.FC = () => {
           }}
           onNickNameChange={(idx, v) => {
             const newFirends = firends.map(item => {
-              if (item.id === curFirendId) item.nickNames =  item.nickNames.map((nickName,j)=> j === idx ? v : nickName );
+              if (item.id === curFirendId) {
+                item.nickNames[idx] = v;
+                /* item.nickNames = item.nickNames.map((nickName, j) =>
+                  j === idx ? v : nickName
+                ); */
+              }
               return item;
             });
             setFirends(newFirends);
